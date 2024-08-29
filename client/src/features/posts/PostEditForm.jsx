@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { API_URL } from '../../../constants';
+import { fetchPost, updatePost } from "../../services/postService";
 
 function PostEditForm() {
     const [post, setPost] = useState({});
@@ -13,14 +13,9 @@ function PostEditForm() {
         // Fetch current post by id
         const fetchCurrentPost = async () => {
             try {
-                const response = await fetch(`${API_URL}/${id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setPost(data);
-                    setLoading(false);
-                } else {
-                    throw response;
-                }
+                const post = await fetchPost(id);
+                setPost(post);
+                setLoading(false);
             } catch (error) {
                 setError(error);
             }
@@ -32,22 +27,8 @@ function PostEditForm() {
         e.preventDefault();
 
         try {
-            const response = await fetch(`${API_URL}/${id}`, { 
-                method: "PUT", 
-                headers: { "Content-Type": "application/json" }, 
-                body: JSON.stringify({
-                    title: post.title,
-                    body: post.body
-                }) 
-            });
-    
-            if (response.ok) {
-                const json = await response.json();
-                console.log(json);
-                navigate(`/posts/${id}`);
-            } else {
-                console.error(response);
-            }
+            await updatePost(post);
+            navigate(`/posts/${id}`);
         } catch (error) {
             console.error(error);
         }
