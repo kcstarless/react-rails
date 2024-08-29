@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { API_URL } from '../../../constants';
+import { deletePost, fetchPost } from "../../services/postService";
 
 function PostsDetails() {
     const [post, setPost] = useState({});
@@ -11,14 +11,9 @@ function PostsDetails() {
     useEffect(() => {
         const fetchCurrentPost = async () => {
             try {
-                const response = await fetch(`${API_URL}/${id}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setPost(data);
-                    setLoading(false);
-                } else {
-                    throw response;
-                }
+                const data = await fetchPost(id);
+                setPost(data);
+                setLoading(false);
             } catch (error) {
                 console.error(error);
             }
@@ -26,19 +21,10 @@ function PostsDetails() {
         fetchCurrentPost();
     }, [id]);
 
-    const deletePost = async () => {
+    const deletePostHandler = async () => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (response.ok) {
-                navigate('/');
-            } else {
-                throw response;
-            }
+            await deletePost(id);
+            navigate('/');
         } catch (error) {
             console.error(error);
         }
@@ -54,7 +40,7 @@ function PostsDetails() {
         {" | "}
       <Link to="/">Back to Posts List</Link>
         {" | "}
-      <button onClick={deletePost}>Delete</button>
+      <button onClick={deletePostHandler}>Delete</button>
     </div>
   );
 }
