@@ -1,6 +1,7 @@
 // API_URL comes from .env.development file
 import React, { useState, useEffect } from 'react';
 import { API_URL } from '../../../constants';
+import { Link } from "react-router-dom";
 
 
 function PostsList() {
@@ -34,7 +35,9 @@ function PostsList() {
             <h2>Posts List</h2>
             {posts.map((post) => (
                 <div key={post.id} className="post-container">
-                    <h3>{post.title}</h3>
+                    <h3>
+                        <Link to={`/posts/${post.id}`} className="post-title">{post.title}</Link> 
+                    </h3>
                     <p>{post.body}</p>
                 </div>
             ))}
