@@ -1,6 +1,6 @@
 // API_URL comes from .env.development file
 import React, { useState, useEffect } from 'react';
-import { API_URL } from '../../../constants';
+import { fetchAllPosts, deletePostSeverice } from '../../services/postService';
 import { Link } from "react-router-dom";
 
 
@@ -12,39 +12,24 @@ function PostsList() {
 
     // Fetch posts from Rails API
     useEffect(() => {
-        async function fetchPosts() {
+        async function loadPost() {
             try {
-                const response = await fetch(API_URL);
-                if (response.ok) {
-                    const data = await response.json();
-                    setPosts(data);
-                } else {
-                    throw response;
-                }
+                const data = await fetchAllPosts();
+                setPosts(data);
+                setLoading(false);
             } catch (error) {
                 setError(error);
-            } finally {
                 setLoading(false);
             }
         }
-        fetchPosts();
+        loadPost();
     }, []);
 
     const deletePost = async (id) => {
         try {
-            const response = await fetch(`${API_URL}/${id}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-            if (response.ok) {
-                setPosts(posts.filter((post) => post.id !== id));
-            } else {
-                throw response;
-            }
-        }
-        catch (error) {
+            await deletePostSeverice(id);
+            setPosts(posts.filter((post) => post.id !== id));
+        } catch (error) {
             console.error(error);
         }
     }
