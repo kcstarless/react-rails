@@ -1,5 +1,4 @@
 // Posts show link and create new post link are in NavBar component
-import React from 'react'
 import { Link } from 'react-router-dom'
 
 
